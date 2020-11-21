@@ -9,8 +9,8 @@ class FactsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Color(0xFFF6F6F6),
       ),
-      padding: EdgeInsets.symmetric(vertical: 27),
-      child: Text("Facts"),
+      padding: EdgeInsets.symmetric(vertical: 23),
+      child: Center(child: Text("Facts")),
     );
   }
 }

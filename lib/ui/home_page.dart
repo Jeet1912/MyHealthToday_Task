@@ -8,22 +8,22 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFE5E5E5),
-      body: Padding(
-        padding: EdgeInsets.only(
-          top: 54.0,
-        ),
-        child: ListView(children: [
+      body: ListView(
+        children: [
+          SizedBox(
+            height: 54.0,
+          ),
           _createTopPortion(),
           Center(
               child: Padding(
             padding: EdgeInsets.only(
-              left: 141.0,
+              left: 227,
               right: 227.0,
               top: 113.0,
             ),
             child: _createGridView(context),
           )),
-        ]),
+        ],
       ),
     );
   }
@@ -110,6 +110,7 @@ class HomePage extends StatelessWidget {
         crossAxisCount: 2,
         mainAxisSpacing: 21,
         crossAxisSpacing: 86,
+        childAspectRatio: 7.04,
       ),
       itemBuilder: (context, index) {
         return FactsCard();
