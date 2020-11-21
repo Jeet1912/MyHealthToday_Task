@@ -1,29 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:task/data_model/facts_model.dart';
+import 'package:task/service/api_service.dart';
+import 'package:task/service/validator.dart';
 import 'package:task/ui/facts_card.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  Future<Facts> _facts;
+  int _n = 0;
+  bool _submitted = false;
+  bool _check = false;
+  TextEditingController _controller = new TextEditingController();
+  @override
+  void initState() {
+    _facts = ApiService().getFacts();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFE5E5E5),
-      body: ListView(
-        children: [
-          SizedBox(
-            height: 54.0,
-          ),
-          _createTopPortion(),
-          Center(
-              child: Padding(
-            padding: EdgeInsets.only(
-              left: 227,
-              right: 227.0,
-              top: 113.0,
+      body: Scrollbar(
+        child: ListView(
+          children: [
+            SizedBox(
+              height: 54.0,
             ),
-            child: _createGridView(context),
-          )),
-        ],
+            _createTopPortion(),
+            Center(
+                child: Padding(
+              padding: EdgeInsets.only(
+                left: 227,
+                right: 227.0,
+                top: 113.0,
+                bottom: 100,
+              ),
+              child: _createGridView(context),
+            )),
+          ],
+        ),
       ),
     );
   }
@@ -46,14 +72,27 @@ class HomePage extends StatelessWidget {
           children: [
             Container(
               decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(10),
                 color: Color(0xFFFFF8F8),
               ),
               width: 518,
               child: TextField(
                 textAlign: TextAlign.center,
-                autofocus: false,
+                textDirection: TextDirection.ltr,
+                autofocus: true,
+                controller: _controller,
+                onChanged: (value) {
+                  _controller.text = value;
+                  _check = Validators().isNumeric(_controller.text);
+                },
+                onEditingComplete: () {
+                  setState(() {
+                    if (_check == true) {
+                      _submitted = true;
+                      _n = int.parse(_controller.text);
+                    }
+                  });
+                },
                 decoration: InputDecoration(
                   hintText: "Enter Numer of Facts you want",
                   contentPadding: EdgeInsets.symmetric(
@@ -83,11 +122,20 @@ class HomePage extends StatelessWidget {
             FlatButton(
               height: 52,
               minWidth: 116,
+              disabledColor:
+                  _controller.text.isEmpty ? Colors.grey : Color(0xFFC4C4C4),
               color: Color(0xFFC4C4C4),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  if (_check == true) {
+                    _submitted = true;
+                    _n = int.parse(_controller.text);
+                  }
+                });
+              },
               child: Text(
                 "Get Facts",
                 style: TextStyle(
@@ -103,19 +151,28 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _createGridView(BuildContext context) {
-    return GridView.builder(
-      physics: NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 21,
-        crossAxisSpacing: 86,
-        childAspectRatio: 7.04,
-      ),
-      itemBuilder: (context, index) {
-        return FactsCard();
-      },
-      itemCount: 4,
-    );
+    return _submitted && _check
+        ? FutureBuilder<Facts>(
+            future: _facts,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return FactsCard(n: _n, snapshot: snapshot);
+              } else {
+                return Center(
+                  child: SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+            })
+        : Text(
+            "Please enter a numeric value, i.e. 1,2,3... ",
+            style: TextStyle(
+              color: Colors.red[400],
+              fontSize: 15,
+            ),
+          );
   }
 }
