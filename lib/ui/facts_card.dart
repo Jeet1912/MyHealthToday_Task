@@ -33,7 +33,7 @@ class FactsCard extends StatelessWidget {
             ),
           ),
           padding: EdgeInsets.symmetric(vertical: 23, horizontal: 10),
-          child: Center(child: Text("Fact $index - $text")),
+          child: Center(child: Text("Fact ${index + 1} - $text")),
         );
       },
       itemCount: n,

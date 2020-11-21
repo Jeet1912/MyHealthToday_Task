@@ -83,6 +83,9 @@ class _HomePageState extends State<HomePage> {
                 controller: _controller,
                 onChanged: (value) {
                   _controller.text = value;
+                  _controller.selection = TextSelection.fromPosition(
+                    TextPosition(offset: _controller.text.length),
+                  );
                   _check = Validators().isNumeric(_controller.text);
                 },
                 onEditingComplete: () {
@@ -151,7 +154,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _createGridView(BuildContext context) {
-    return _submitted && _check
+    return _submitted && _check && Validators().isLess(_n)
         ? FutureBuilder<Facts>(
             future: _facts,
             builder: (context, snapshot) {
@@ -168,7 +171,7 @@ class _HomePageState extends State<HomePage> {
               }
             })
         : Text(
-            "Please enter a numeric value, i.e. 1,2,3... ",
+            "Please enter a numeric value from 1,2,3...,287 only.",
             style: TextStyle(
               color: Colors.red[400],
               fontSize: 15,

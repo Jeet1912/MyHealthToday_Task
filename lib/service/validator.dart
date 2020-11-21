@@ -5,4 +5,12 @@ class Validators {
     }
     return int.tryParse(s) != null;
   }
+
+  bool isLess(int n) {
+    if (n < 288) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
