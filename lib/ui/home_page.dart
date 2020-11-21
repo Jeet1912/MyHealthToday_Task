@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task/data_model/cursor_helper.dart';
 import 'package:task/data_model/facts_model.dart';
 import 'package:task/service/api_service.dart';
 import 'package:task/service/validator.dart';
@@ -14,7 +15,8 @@ class _HomePageState extends State<HomePage> {
   int _n = 0;
   bool _submitted = false;
   bool _check = false;
-  TextEditingController _controller = new TextEditingController();
+  TextEditingControllerWithCursorPosition _controller =
+      new TextEditingControllerWithCursorPosition();
   @override
   void initState() {
     _facts = ApiService().getFacts();
@@ -83,9 +85,6 @@ class _HomePageState extends State<HomePage> {
                 controller: _controller,
                 onChanged: (value) {
                   _controller.text = value;
-                  _controller.selection = TextSelection.fromPosition(
-                    TextPosition(offset: _controller.text.length),
-                  );
                   _check = Validators().isNumeric(_controller.text);
                 },
                 onEditingComplete: () {
